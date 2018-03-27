@@ -37,9 +37,9 @@ public class Mynotes implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		final Button sendButton = new Button("New Notess");
+		final Button sendButton = new Button("Login");
 		final TextBox nameField = new TextBox();
-		nameField.setText("GWT User");
+		nameField.setText("Please type your user name");
 		final Label errorLabel = new Label();
 
 		// We can add style names to widgets
