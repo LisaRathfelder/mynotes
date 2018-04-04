@@ -37,19 +37,44 @@ public class Mynotes implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		final Button sendButton = new Button("Login");
+		final Button sendButton = new Button("Old button to be deleted");
 		final TextBox nameField = new TextBox();
-		nameField.setText("Please type your user name");
+		nameField.setText("old old old");
 		final Label errorLabel = new Label();
-
-		// We can add style names to widgets
-		sendButton.addStyleName("sendButton");
-
+		
+		// BEGIN
+		
 		// Add the nameField and sendButton to the RootPanel
 		// Use RootPanel.get() to get the entire body element
-		RootPanel.get("nameFieldContainer").add(nameField);
-		RootPanel.get("sendButtonContainer").add(sendButton);
-		RootPanel.get("errorLabelContainer").add(errorLabel);
+		final VerticalPanel loginPanel=new VerticalPanel();  
+		final VerticalPanel notePanel=new VerticalPanel();
+		final VerticalPanel editPanel=new VerticalPanel();
+		
+		//Elemente von Login View
+		final TextBox usernameField = new TextBox();
+		usernameField.setText("Please type your username");
+		final Button loginButton = new Button("Login");
+		usernameField.getElement().setClassName("textField");
+		loginButton.getElement().setClassName("button");
+		
+		loginPanel.add(usernameField);
+		loginPanel.add(loginButton);
+		
+		//Elemente von Note View
+		
+		//Elemente von Edit View
+		
+		
+		
+		
+		
+		RootPanel.get("mainContainer").add(loginPanel);
+		RootPanel.get("mainContainer").add(notePanel);
+		RootPanel.get("mainContainer").add(editPanel);
+		loginPanel.setVisible(true);
+		notePanel.setVisible(false); //soll nicht sichtbar sein 
+		editPanel.setVisible(false);
+		
 
 		// Focus the cursor on the name field when the app loads
 		nameField.setFocus(true);
