@@ -35,10 +35,13 @@ h1 {
 
 .textField{
 	margin-top:20px;
+	width:30%;
 
 }
 	
 .button{
+	width:30%;
+	margin-top:20px;
 }
 
 #mainContainer{
