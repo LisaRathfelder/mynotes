@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -32,9 +33,11 @@ public class Mynotes implements EntryPoint {
 			+ "attempting to contact the server. Please check your network " + "connection and try again.";
 
 	/**
-	 * Create a remote service proxy to talk to the server-side Greeting service.
+	 * Create a remote service proxy to talk to the server-side NoteMapper service.
 	 */
 	private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
+	private final NoteMapperAsync NoteMapper = GWT.create(NoteMapper.class); //NoteMapper Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von NoteMapper Implementation im Server zugreifen/Benutzen
+	
 
 	private  String username;
 	
@@ -42,17 +45,34 @@ public class Mynotes implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		
+		// Create the popup dialog box
+				final DialogBox dialogBox = new DialogBox();
+				dialogBox.setText("Remote Procedure Call");
+				dialogBox.setAnimationEnabled(true);
+				final Button closeButton = new Button("Close");
+				// We can set the id of a widget by accessing its Element
+				closeButton.getElement().setId("closeButton");
+				final Label textToServerLabel = new Label();
+				final HTML serverResponseLabel = new HTML();
+				VerticalPanel dialogVPanel = new VerticalPanel();
+				dialogVPanel.addStyleName("dialogVPanel");
+				dialogVPanel.add(new HTML("<b>Sending name to the server:</b>"));
+				dialogVPanel.add(textToServerLabel);
+				dialogVPanel.add(new HTML("<br><b>Server replies:</b>"));
+				dialogVPanel.add(serverResponseLabel);
+				dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
+				dialogVPanel.add(closeButton);
+				dialogBox.setWidget(dialogVPanel);
 		
 		final Button sendButton = new Button("Old button to be deleted");
 		final TextBox nameField = new TextBox();
 		nameField.setText("old old old");
-		final Label errorLabel = new Label();
 		
 		// BEGIN
+		final Label errorLabel = new Label();
+		errorLabel.setText("Error Logs");
+		errorLabel.addStyleName("errorLog"); //Style für CSS definieren
 		
-		// Add the nameField and sendButton to the RootPanel
-		// Use RootPanel.get() to get the entire body element
 		final VerticalPanel loginPanel=new VerticalPanel();  
 		final VerticalPanel notePanel=new VerticalPanel();
 		final VerticalPanel editPanel=new VerticalPanel();
@@ -85,11 +105,13 @@ public class Mynotes implements EntryPoint {
 		
 		//Elemente von Note View
 		final Button createButton = new Button("Create note");
+		createButton.getElement().setClassName("button");
 		final TextBox noteText = new TextBox();
 		noteText.setText("Saved Note1");
 		final Button editButton = new Button("Edit");
 		final Button deleteButton = new Button("Delete");
 		final Button logoutButton = new Button("Logout");
+		
 		
 		logoutButton.getElement().setClassName("button");
 		
@@ -102,18 +124,20 @@ public class Mynotes implements EntryPoint {
 		
 		
 		//Elemente von Edit View
-		//final TextArea 
-		final TextBox editText = new TextBox();//
+		final TextArea editText = new TextArea();//
 		editText.setText("Type your Note / Existing Note comes here");
+		editText.getElement().setClassName("textField");
 		final Button saveButton = new Button("Save");
+		saveButton.getElement().setClassName("button");
 		
 		editPanel.add(editText);
 		editPanel.add(saveButton);
 		
-		
+		// Use RootPanel.get() to get the entire body element
 		RootPanel.get("mainContainer").add(loginPanel);
 		RootPanel.get("mainContainer").add(notePanel);
 		RootPanel.get("mainContainer").add(editPanel);
+		RootPanel.get("errorContainer").add(errorLabel); //Error label in die Hauptseite (Rootpanel) hinzugefügt
 		loginPanel.setVisible(true);
 		notePanel.setVisible(false); //soll nicht sichtbar sein 
 		editPanel.setVisible(false);
@@ -123,13 +147,32 @@ public class Mynotes implements EntryPoint {
 		// Add a handler to login button
 		loginButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
+				
 				loginPanel.setVisible(false);
-				notePanel.setVisible(true); //soll nicht sichtbar sein 
+				notePanel.setVisible(true); //soll sichtbar sein 
 				editPanel.setVisible(false);
 				username=usernameField.getText();
-				noteText.setText("Saved Note1 of " + username);
+				errorLabel.setText("Log: Saved Note1 of " + username);
+				NoteMapper.greetServer("Text2server", 
+						
+						new AsyncCallback<String>() {
+					public void onFailure(Throwable caught) {
+						// Show the RPC error message to the user
+						errorLabel.setText("Error Occured " + caught);
+				
+					}
 
-			}
+					public void onSuccess(String result) {
+						dialogBox.setText("Remote Procedure Call");
+						serverResponseLabel.removeStyleName("serverResponseLabelError");
+						serverResponseLabel.setHTML(result);
+						dialogBox.center();
+						closeButton.setFocus(true);
+					}
+				}
+						);
+				
+							}
 		});
 	
 		
@@ -139,38 +182,34 @@ public class Mynotes implements EntryPoint {
 				loginPanel.setVisible(true);
 				notePanel.setVisible(false); //soll nicht sichtbar sein 
 				editPanel.setVisible(false);
-				usernameField.setText(username);
+				//usernameField.setText(username);
 			}
 		});	
 		
+		// Add a handler to create button
+		createButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				loginPanel.setVisible(false);
+				notePanel.setVisible(false); //soll nicht sichtbar sein 
+				editPanel.setVisible(true);
+			}
+		});	
 		
-		
-		
-		
-		
+		// Add a handler to save button
+		saveButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				loginPanel.setVisible(false);
+				notePanel.setVisible(true); //soll nicht sichtbar sein 
+				editPanel.setVisible(false);
+			}
+		});	
+			
 
 		// Focus the cursor on the name field when the app loads
 		nameField.setFocus(true);
 		nameField.selectAll();
 
-		// Create the popup dialog box
-		final DialogBox dialogBox = new DialogBox();
-		dialogBox.setText("Remote Procedure Call");
-		dialogBox.setAnimationEnabled(true);
-		final Button closeButton = new Button("Close");
-		// We can set the id of a widget by accessing its Element
-		closeButton.getElement().setId("closeButton");
-		final Label textToServerLabel = new Label();
-		final HTML serverResponseLabel = new HTML();
-		VerticalPanel dialogVPanel = new VerticalPanel();
-		dialogVPanel.addStyleName("dialogVPanel");
-		dialogVPanel.add(new HTML("<b>Sending name to the server:</b>"));
-		dialogVPanel.add(textToServerLabel);
-		dialogVPanel.add(new HTML("<br><b>Server replies:</b>"));
-		dialogVPanel.add(serverResponseLabel);
-		dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-		dialogVPanel.add(closeButton);
-		dialogBox.setWidget(dialogVPanel);
+		
 
 		// Add a handler to close the DialogBox
 		closeButton.addClickHandler(new ClickHandler() {

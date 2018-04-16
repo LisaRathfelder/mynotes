@@ -33,14 +33,19 @@ h1 {
   margin: 15px 6px 6px;
 }
 
+.errorLog{
+	margin-top:220px;
+	color :red;
+}
+
 .textField{
 	margin-top:20px;
-	width:30%;
+	width:20%;
 
 }
 	
 .button{
-	width:30%;
+	width:20%;
 	margin-top:20px;
 }
 

@@ -16,6 +16,16 @@
     <url-pattern>/mynotes/greet</url-pattern>
   </servlet-mapping>
   
+    <servlet>
+    <servlet-name>NoteMapper</servlet-name>
+    <servlet-class>com.lisarathfelder.mynotes.server.NoteMapperImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>NoteMapper</servlet-name>
+    <url-pattern>/mynotes/notemapper</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>Mynotes.html</welcome-file>
