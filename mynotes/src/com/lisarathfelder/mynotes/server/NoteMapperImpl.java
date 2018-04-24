@@ -1,41 +1,31 @@
 package com.lisarathfelder.mynotes.server;
 
 import com.lisarathfelder.mynotes.client.NoteMapper;
-import com.lisarathfelder.mynotes.shared.FieldVerifier;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 @SuppressWarnings("serial")
-public class NoteMapperImpl  extends RemoteServiceServlet implements NoteMapper {
-	public String greetServer(String input) throws IllegalArgumentException {
-		// Verify that the input is valid. 
-		if (!FieldVerifier.isValidName(input)) {
-			// If the input is not valid, throw an IllegalArgumentException back to
-			// the client.
-			throw new IllegalArgumentException("Name must be at least 4 characters long");
-		}
-
-		String serverInfo = getServletContext().getServerInfo();
-		String userAgent = getThreadLocalRequest().getHeader("User-Agent");
-
-		// Escape data from the client to avoid cross-site script vulnerabilities.
-		input = escapeHtml(input);
-		userAgent = escapeHtml(userAgent);
-
-		return "UNSER  SERVLET Hello, " + input + "!<br><br>I am running " + serverInfo + ".<br><br>It looks like you are using:<br>"
-				+ userAgent;
+public class NoteMapperImpl  extends RemoteServiceServlet implements NoteMapper { 
+	
+	
+	
+	public String createNote(String noteText) throws IllegalArgumentException {
+		
+		//do a database connection and save the note object in database 
+		
+		//send an answer back to client
+		return "Your note with the following content: <br><br>" + noteText + "!<br><br>is created <br>";
 	}
 
-	/**
-	 * Escape an html string. Escaping data received from the client helps to
-	 * prevent cross-site script vulnerabilities.
-	 * 
-	 * @param html the html string to escape
-	 * @return the escaped string
-	 */
-	private String escapeHtml(String html) {
-		if (html == null) {
-			return null;
-		}
-		return html.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+
+	public String deleteNote(String noteText) throws IllegalArgumentException {
+		
+		//do a database connection and delete the note object in database 
+		
+		//send an answer back to client
+		return "Your note with the following content: <br><br>" + noteText + "!<br><br>is deleted <br>";
 	}
+	
+	
+	
+	
 }

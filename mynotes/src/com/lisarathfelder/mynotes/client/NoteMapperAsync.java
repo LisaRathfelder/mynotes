@@ -4,6 +4,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface NoteMapperAsync {
 
-	void greetServer(String input, AsyncCallback<String> callback) throws IllegalArgumentException;
+	void createNote(String note, AsyncCallback<String> callback) throws IllegalArgumentException;
+	void deleteNote(String note, AsyncCallback<String> callback) throws IllegalArgumentException;
 
 }

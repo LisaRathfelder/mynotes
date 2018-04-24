@@ -5,5 +5,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath; //GWT Klassen f
 
 @RemoteServiceRelativePath("notemapper")
 public interface NoteMapper extends RemoteService {
-	String greetServer(String name) throws IllegalArgumentException;
+	String createNote(String note) throws IllegalArgumentException;
+	String deleteNote(String note) throws IllegalArgumentException;
 }
