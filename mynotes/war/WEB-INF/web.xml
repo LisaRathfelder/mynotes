@@ -17,6 +17,18 @@
     <url-pattern>/mynotes/notemapper</url-pattern>
   </servlet-mapping>
   
+  
+   <servlet>
+    <servlet-name>LoginMapper</servlet-name>
+    <servlet-class>com.lisarathfelder.mynotes.server.LoginMapperImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>LoginMapper</servlet-name>
+    <url-pattern>/mynotes/loginmapper</url-pattern>
+  </servlet-mapping>
+  
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>Mynotes.html</welcome-file>
