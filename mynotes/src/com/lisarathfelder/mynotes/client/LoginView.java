@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -20,8 +21,10 @@ public class LoginView {
 	final VerticalPanel loginPanel=new VerticalPanel();  
 	//Elemente von Login View
 	final TextBox usernameField = new TextBox();
+	final PasswordTextBox passwordField = new PasswordTextBox(); 
 	final Button loginButton = new Button("Login");
 	final Label errorLabel = new Label();
+	
 
 	// Create the popup dialog box
 	final DialogBox dialogBox = new DialogBox();
@@ -34,7 +37,7 @@ public class LoginView {
 	/**
 	 * Create a remote service proxy to talk to the server-side NoteMapper service.
 	 */
-	private final LoginMapperAsync LoginMapper = GWT.create(LoginMapper.class); //LoginMapper Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von LoginMapper Implementation im Server zugreifen/Benutzen
+	private final LoginServiceAsync LoginService = GWT.create(LoginService.class); //LoginMapper Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von LoginMapper Implementation im Server zugreifen/Benutzen
 
 
 
@@ -46,10 +49,13 @@ public class LoginView {
 
 		usernameField.setText("Please type your username");
 		usernameField.getElement().setClassName("textField");
+		passwordField.setText("Please type your password");
+		passwordField.getElement().setClassName("passwordField"); //? 
 		loginButton.getElement().setClassName("button");
 
 		loginPanel.add(usernameField);
 		loginPanel.add(loginButton);
+		loginPanel.add(passwordField);
 
 		RootPanel.get("mainContainer").clear();	
 		RootPanel.get("mainContainer").add(loginPanel);
@@ -74,15 +80,14 @@ public class LoginView {
 		loginButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 
-				AllNotesView allNotesView = new AllNotesView();
-				allNotesView.loadView();	
+
 				username=usernameField.getText();
 
 				currentUser.setUserName(usernameField.getText());
 
 				errorLabel.setText("Log: Saved Note1 of " + username);
 
-				LoginMapper.login(currentUser, //RPC-Kommunikation
+				LoginService.login(currentUser, //RPC-Kommunikation
 						new AsyncCallback<String>() {
 					public void onFailure(Throwable errorMessage) {
 						// Show the RPC error message to the user
@@ -97,7 +102,10 @@ public class LoginView {
 						closeButton.setFocus(true);
 					}
 				}
-						);			 
+						);	
+				
+				AllNotesView allNotesView = new AllNotesView();
+				allNotesView.loadView(currentUser);	
 
 
 

@@ -8,24 +8,24 @@
   <!-- Servlets -->
   
     <servlet>
-    <servlet-name>NoteMapper</servlet-name>
-    <servlet-class>com.lisarathfelder.mynotes.server.NoteMapperImpl</servlet-class>
+    <servlet-name>NoteService</servlet-name>
+    <servlet-class>com.lisarathfelder.mynotes.server.NoteServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>NoteMapper</servlet-name>
-    <url-pattern>/mynotes/notemapper</url-pattern>
+    <servlet-name>NoteService</servlet-name>
+    <url-pattern>/mynotes/noteservice</url-pattern>
   </servlet-mapping>
   
   
    <servlet>
-    <servlet-name>LoginMapper</servlet-name>
-    <servlet-class>com.lisarathfelder.mynotes.server.LoginMapperImpl</servlet-class>
+    <servlet-name>LoginService</servlet-name>
+    <servlet-class>com.lisarathfelder.mynotes.server.LoginServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>LoginMapper</servlet-name>
-    <url-pattern>/mynotes/loginmapper</url-pattern>
+    <servlet-name>LoginService</servlet-name>
+    <url-pattern>/mynotes/loginservice</url-pattern>
   </servlet-mapping>
   
   

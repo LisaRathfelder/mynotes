@@ -12,13 +12,16 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.lisarathfelder.mynotes.shared.User;
 
 public class EditNoteView {
 	final VerticalPanel editNotePanel=new VerticalPanel();
 
 	//Elemente von Edit View
-	final TextArea editText = new TextArea();//
+	final TextBox noteTitle = new TextBox();
+	final TextArea editText = new TextArea();
 	final Button saveButton = new Button("Save");
 
 
@@ -33,10 +36,10 @@ public class EditNoteView {
 	/**
 	 * Create a remote service proxy to talk to the server-side NoteMapper service.
 	 */
-	private final NoteMapperAsync NoteMapper = GWT.create(NoteMapper.class); //NoteMapper Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von NoteMapper Implementation im Server zugreifen/Benutzen
+	private final NoteServiceAsync NoteService = GWT.create(NoteService.class); //NoteMapper Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von NoteMapper Implementation im Server zugreifen/Benutzen
 
 
-	public void loadView() {
+	public void loadView(User user) {
 
 
 		editNotePanel.setWidth("100%");
@@ -60,6 +63,7 @@ public class EditNoteView {
 		RootPanel.get("errorContainer").clear();
 		RootPanel.get("errorContainer").add(errorLabel); //Error label in die Hauptseite (Rootpanel) hinzugefügt
 
+		
 		dialogBox.setText("");
 		dialogBox.setAnimationEnabled(true);
 		// We can set the id of a widget by accessing its Element
@@ -76,9 +80,9 @@ public class EditNoteView {
 		saveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				AllNotesView allNotesView = new AllNotesView();
-				allNotesView.loadView();	
+				allNotesView.loadView(user);	
 
-				NoteMapper.createNote(editText.getText(), //RPC-Kommunikation
+				NoteService.createNote(editText.getText(), //RPC-Kommunikation
 						new AsyncCallback<String>() {
 					public void onFailure(Throwable errorMessage) {
 						// Show the RPC error message to the user
