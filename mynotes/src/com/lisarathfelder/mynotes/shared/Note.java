@@ -1,6 +1,6 @@
 package com.lisarathfelder.mynotes.shared;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class Note extends BusinessObject {
 
@@ -10,7 +10,7 @@ public class Note extends BusinessObject {
 	private String content;
 	private Date creatDate;
 	private Date modDate;
-	private int userID;
+	private String userName;
 	private int noteID;
 
 	/**
@@ -59,18 +59,18 @@ public class Note extends BusinessObject {
 	}
 
 	/**
-	 * @return the UserID
+	 * @return the UserName
 	 */
-	public int getUserID() {
-		return userID;
+	public String getUserName() {
+		return userName;
 	}
 
 	/**
 	 * @param UserID
 	 *            the UserID to set
 	 */
-	public void setUserID(int userID) {
-		this.userID = userID;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class Note extends BusinessObject {
 	/**
 	 * @return the content
 	 */
-	public String content() {
+	public String getContent() {
 		return content;
 	}
 
@@ -99,7 +99,7 @@ public class Note extends BusinessObject {
 	 * @param content
 	 *            the content to set
 	 */
-	public void content(String content) {
+	public void setContent(String content) {
 		this.content = content;
 	}
 	

@@ -48,14 +48,14 @@ public class LoginView {
 		loginPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
 		usernameField.setText("Please type your username");
-		usernameField.getElement().setClassName("textField");
-		passwordField.setText("Please type your password");
-		passwordField.getElement().setClassName("passwordField"); //? 
+		usernameField.getElement().setClassName("textFieldLogin");
+		passwordField.setText("1234");
+		passwordField.getElement().setClassName("textFieldLogin"); 
 		loginButton.getElement().setClassName("button");
 
 		loginPanel.add(usernameField);
-		loginPanel.add(loginButton);
 		loginPanel.add(passwordField);
+		loginPanel.add(loginButton);
 
 		RootPanel.get("mainContainer").clear();	
 		RootPanel.get("mainContainer").add(loginPanel);
@@ -118,6 +118,21 @@ public class LoginView {
 				dialogBox.hide();
 			}
 		});
+		
+		passwordField.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				passwordField.setText("");	
+			}
+		});
+	
+		usernameField.addClickHandler(new ClickHandler(){
+			public void onClick(ClickEvent event) {
+				usernameField.setText("");	
+			}
+		});
+		
+		
+	
+	
 	}
-
 }

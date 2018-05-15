@@ -1,5 +1,7 @@
 package com.lisarathfelder.mynotes.client;
 
+import java.util.Date;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -14,6 +16,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.lisarathfelder.mynotes.shared.Note;
 import com.lisarathfelder.mynotes.shared.User;
 
 public class EditNoteView {
@@ -23,6 +26,7 @@ public class EditNoteView {
 	final TextBox noteTitle = new TextBox();
 	final TextArea editText = new TextArea();
 	final Button saveButton = new Button("Save");
+	
 
 
 	// Create the popup dialog box
@@ -38,7 +42,7 @@ public class EditNoteView {
 	 */
 	private final NoteServiceAsync NoteService = GWT.create(NoteService.class); //NoteMapper Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von NoteMapper Implementation im Server zugreifen/Benutzen
 
-
+	private Note currentNote = new Note();
 	public void loadView(User user) {
 
 
@@ -48,10 +52,14 @@ public class EditNoteView {
 		editNotePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
 		editText.setText("Type your Note / Existing Note comes here");
-		editText.getElement().setClassName("textField");
-
+		editText.getElement().setClassName("textArea");
+		editText.setVisibleLines(10);
+		noteTitle.getElement().setClassName("textFieldNote");
+		noteTitle.setText("Type your note title");
+		
 		saveButton.getElement().setClassName("button");
 
+		editNotePanel.add(noteTitle);
 		editNotePanel.add(editText);
 		editNotePanel.add(saveButton);
 
@@ -74,15 +82,21 @@ public class EditNoteView {
 		dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
 		dialogVPanel.add(closeButton);
 		dialogBox.setWidget(dialogVPanel);
-
-
+		
 		// Add a handler to save button
 		saveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				AllNotesView allNotesView = new AllNotesView();
-				allNotesView.loadView(user);	
+				//Save user data in currentNote object
+				currentNote.setTitle(noteTitle.getText());
+				currentNote.setContent(editText.getText());
+			    Date currentDate = new Date();
+				currentNote.setCreatDate(currentDate);
+				currentNote.setModDate(currentDate);
+				currentNote.setUserName(user.getUserName());
 
-				NoteService.createNote(editText.getText(), //RPC-Kommunikation
+				
+				//Sending the note object in server via RPC
+				NoteService.createNote(currentNote, //RPC-Kommunikation
 						new AsyncCallback<String>() {
 					public void onFailure(Throwable errorMessage) {
 						// Show the RPC error message to the user
@@ -97,7 +111,13 @@ public class EditNoteView {
 						closeButton.setFocus(true);
 					}
 				}
-						);			
+						);	
+				
+				
+				// Loading Allnotesview
+				AllNotesView allNotesView = new AllNotesView();
+				allNotesView.loadView(user);	
+
 
 
 			}
@@ -110,9 +130,18 @@ public class EditNoteView {
 				dialogBox.hide();
 			}
 		});
+		
+		noteTitle.addClickHandler(new ClickHandler(){
+			public void onClick(ClickEvent event) {
+				noteTitle.setText("");
+			}
+		});
 
-
-
+		editText.addClickHandler(new ClickHandler(){
+			public void onClick(ClickEvent event) {
+				editText.setText("");
+			}
+		});
 
 	}
 }
