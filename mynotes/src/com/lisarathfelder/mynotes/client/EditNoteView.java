@@ -107,7 +107,7 @@ public class EditNoteView {
 					public void onSuccess(String result) {
 						dialogBox.setText("Successfull");
 						serverResponseLabel.setHTML(result);
-						dialogBox.center();
+						//dialogBox.center();
 						closeButton.setFocus(true);
 					}
 				}

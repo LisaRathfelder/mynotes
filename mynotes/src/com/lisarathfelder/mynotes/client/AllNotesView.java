@@ -1,5 +1,8 @@
 package com.lisarathfelder.mynotes.client;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -13,6 +16,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.lisarathfelder.mynotes.shared.Note;
 import com.lisarathfelder.mynotes.shared.User;
 
 public class AllNotesView {
@@ -34,7 +38,7 @@ public class AllNotesView {
 	final HTML serverResponseLabel = new HTML();
 
 	private final LoginServiceAsync LoginService = GWT.create(LoginService.class); //LoginMapper (Proxy) Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von LoginMapper Implementation im Server zugreifen/Benutzen
-
+	private final NoteServiceAsync NoteService = GWT.create(NoteService.class); //?
 
 	public void loadView(User user) {
 
@@ -45,12 +49,42 @@ public class AllNotesView {
 
 		createButton.getElement().setClassName("button");
 		noteText.setText("Saved Note1");
+		deleteButton.getElement().setClassName("deleteButton");
 		logoutButton.getElement().setClassName("button");
 
 		allNotesPanel.add(createButton);
 		//allNotesPanel.add(noteText);
 		//allNotesPanel.add(editButton);
-		//allNotesPanel.add(deleteButton);
+		allNotesPanel.add(deleteButton);
+		
+		NoteService.getAllNotesUser(user, //RPC-Kommunikation
+				new AsyncCallback<ArrayList<Note>>() {
+			public void onFailure(Throwable errorMessage) {
+				// Show the RPC error message to the user
+				errorLabel.setText("Error " + errorMessage);
+
+			}
+
+			public void onSuccess(ArrayList<Note> result) {
+				dialogBox.setText("Successfull");
+				String dummy="";
+				for (int i=0; i<result.size();i++) {
+					Note note=new Note();
+					note=result.get(i);
+					dummy+=note.getTitle();
+					dummy= dummy + "<br>";
+				}
+				serverResponseLabel.setHTML(dummy);
+
+				
+				dialogBox.center();
+				closeButton.setFocus(true);
+			}
+		}
+);
+		
+		
+		
 		allNotesPanel.add(logoutButton);
 
 		RootPanel.get("mainContainer").clear();	
@@ -84,7 +118,7 @@ public class AllNotesView {
 						public void onSuccess(String result) {
 							dialogBox.setText("Successfull");
 							serverResponseLabel.setHTML(result);
-							dialogBox.center();
+							//dialogBox.center();
 							closeButton.setFocus(true);
 						}
 					}			
@@ -106,9 +140,35 @@ public class AllNotesView {
 
 		closeButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				dialogBox.hide();
+				dialogBox.hide(); 
 			}
 		});
 
+		// Add a handler to delete button
+		deleteButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+			//Delete user data in currentNote object
+					
+				//Sending the note object in server via RPC
+//				NoteService.deleteNote(currentNote,  //Proxy Object
+//						new AsyncCallback<String>() {
+//						public void onFailure(Throwable errorMessage) {
+//							// Show the RPC error message to the user
+//							errorLabel.setText("Error " + errorMessage);
+//						}
+//						public void onSuccess(String result) {
+//							dialogBox.setText("Successfull");
+//							serverResponseLabel.setHTML(result);
+//							dialogBox.center();
+//							closeButton.setFocus(true);
+//						}
+//					}			
+//					
+//						);
+				LoginView loginView = new LoginView();
+				loginView.loadView();				
+
+			}
+		});	
 	}
 }

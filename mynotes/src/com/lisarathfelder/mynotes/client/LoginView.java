@@ -98,7 +98,7 @@ public class LoginView {
 					public void onSuccess(String result) {
 						dialogBox.setText("Successfull");
 						serverResponseLabel.setHTML(result);
-						dialogBox.center();
+						//dialogBox.center();
 						closeButton.setFocus(true);
 					}
 				}
