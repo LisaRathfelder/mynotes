@@ -25,7 +25,7 @@ public class AllNotesView {
 	//Elemente von Note View
 	final Button createButton = new Button("Create note");
 	//final TextBox noteTitle = new TextBox();
-	final TextBox noteText = new TextBox();
+	final Label noteText = new Label();
 	final Button editButton = new Button("Edit");
 	final Button deleteButton = new Button("Delete");
 	final Button logoutButton = new Button("Logout");
@@ -37,8 +37,8 @@ public class AllNotesView {
 	final Button closeButton = new Button("Close");
 	final HTML serverResponseLabel = new HTML();
 
-	private final LoginServiceAsync LoginService = GWT.create(LoginService.class); //LoginMapper (Proxy) Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von LoginMapper Implementation im Server zugreifen/Benutzen
-	private final NoteServiceAsync NoteService = GWT.create(NoteService.class); //?
+	private final LoginServiceAsync LoginService = GWT.create(LoginService.class); //LoginService (Proxy) Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von LoginService Implementation im Server zugreifen/Benutzen
+	private final NoteServiceAsync NoteService = GWT.create(NoteService.class); //NoteService (Proxy) Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von NoteService Implementation im Server zugreifen/Benutzen
 
 	public void loadView(User user) {
 
