@@ -69,7 +69,6 @@ h1 {
     box-sizing: border-box;
     font-size: 1.2em;
 }
-
 	
 .button{
 	width:20%;
@@ -81,21 +80,36 @@ h1 {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-	
-	
 }
 
 .deleteButton{
-	width:10%;
 	display: inline-block;
     background-color: red;
     color: white; 
     padding: 14px 20px;
-    margin: 15px 0;
     border: none;
     border-radius: 4px;
     cursor: pointer;
 }
+
+.editButton{
+	display: inline-block;
+    background-color: blue;
+    color: white; 
+    padding: 14px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.noteTitle{
+    padding: 12px 20px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1.2em;
+}
+
 
 #mainContainer{
 	margin-left:auto;

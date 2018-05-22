@@ -51,7 +51,8 @@ public class LoginView {
 		usernameField.getElement().setClassName("textFieldLogin");
 		passwordField.setText("1234");
 		passwordField.getElement().setClassName("textFieldLogin"); 
-		loginButton.getElement().setClassName("button");
+		//loginButton.getElement().setClassName("button");
+		loginButton.setStyleName("button");
 
 		loginPanel.add(usernameField);
 		loginPanel.add(passwordField);

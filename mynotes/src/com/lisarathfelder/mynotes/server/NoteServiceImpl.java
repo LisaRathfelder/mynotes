@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 @SuppressWarnings("serial")
-public class NoteServiceImpl  extends RemoteServiceServlet implements NoteService { //ist das das Proxy Obejct?
+public class NoteServiceImpl  extends RemoteServiceServlet implements NoteService { 
 	
 	private int maxNId;
 	
@@ -54,14 +54,6 @@ public class NoteServiceImpl  extends RemoteServiceServlet implements NoteServic
 	}
 
 
-	public String deleteNote(Note note) throws IllegalArgumentException {
-		
-		//do a database connection and delete the note object in database 
-		
-		//send an answer back to client
-		return "Your note with the following content: <br><br>" + note.getContent() + "!<br><br>is deleted <br>";
-	}
-
 
 	@Override
 	public ArrayList<Note> getAllNotesUser(User user) throws IllegalArgumentException {
@@ -77,7 +69,7 @@ public class NoteServiceImpl  extends RemoteServiceServlet implements NoteServic
 					+ "\""); //3. Über stmt Objekt wird SQL-Befehl durchgeführt - auslesen
 			while(rs.next()) {
 				Note note=new Note();
-				note.setId(rs.getInt("nId"));
+				note.setNoteID(rs.getInt("nId"));
 				note.setTitle(rs.getString("title"));
 				AllUserNotes.add(note);
 				
@@ -89,7 +81,37 @@ public class NoteServiceImpl  extends RemoteServiceServlet implements NoteServic
 		} // 2. stmt Objekt wird generiert
 		return AllUserNotes;
 	}
-	
+
+
+
+	@Override
+	public String deleteNoteOfId(int id) throws IllegalArgumentException {
+		Connection con = DBConnection.connection(); // 1. DB connection wird hergestellt
+		
+		try {
+			Statement stmt=con.createStatement();
+			stmt.executeUpdate("delete from notes where nId="
+					+ id);
+			
+		} catch (SQLException e) {  //Fehlerbehandlung
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+
+
+	@Override
+	public Note getNoteOfID(int id) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
 	
 	
 	
