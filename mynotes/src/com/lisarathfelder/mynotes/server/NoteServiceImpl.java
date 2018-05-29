@@ -16,6 +16,7 @@ public class NoteServiceImpl  extends RemoteServiceServlet implements NoteServic
 	
 	private int maxNId;
 	
+	//createNote
 	public String createNote(Note note) throws IllegalArgumentException {
 		 
 		//do a database connection and save the note object in database 
@@ -54,7 +55,8 @@ public class NoteServiceImpl  extends RemoteServiceServlet implements NoteServic
 	}
 
 
-
+	
+	//getAllNotesUser
 	@Override
 	public ArrayList<Note> getAllNotesUser(User user) throws IllegalArgumentException {
 		
@@ -83,7 +85,7 @@ public class NoteServiceImpl  extends RemoteServiceServlet implements NoteServic
 	}
 
 
-
+	//deleteNoteOfId
 	@Override
 	public String deleteNoteOfId(int id) throws IllegalArgumentException {
 		Connection con = DBConnection.connection(); // 1. DB connection wird hergestellt
@@ -101,18 +103,32 @@ public class NoteServiceImpl  extends RemoteServiceServlet implements NoteServic
 		return null;
 	}
 
-
-
+	//getNoteOfId
 	@Override
 	public Note getNoteOfID(int id) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Note currentNote = new Note();
+		currentNote.setNoteID(id);
+		Connection con = DBConnection.connection(); // 1. DB connection wird hergestellt
+		try {
+		Statement stmt=con.createStatement(); // 2. stmt Objekt wird generiert
+		ResultSet rs=stmt.executeQuery("SELECT title, content from notes where nId=\""
+				+ id
+				+ "\""); //3. Über stmt Objekt wird SQL-Befehl durchgeführt - auslesen
+	    if(rs.next()) {
+	    	currentNote.setTitle(rs.getString("title")); 
+	    	currentNote.setContent(rs.getString("content"));
+	   	
+	    }
+		
+		
+	} catch (SQLException e) {  //Fehlerbehandlung
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+	return currentNote;
+}
+
 	}
 
-
-
-
-	
-	
-	
-}

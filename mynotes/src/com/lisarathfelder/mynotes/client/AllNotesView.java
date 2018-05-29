@@ -32,6 +32,8 @@ public class AllNotesView {
 	public void loadView(User user) {
 
 		//1. Über das Proxy-Objekt wird die Methode/Service getAllNoteUser aufgerufen
+		
+		//Methodenaufruf getAllNotesUser
 		NoteService.getAllNotesUser(user, //RPC-Kommunikation
 				new AsyncCallback<ArrayList<Note>>() {
 			public void onFailure(Throwable errorMessage) {
@@ -42,7 +44,6 @@ public class AllNotesView {
 			//2. Antwort vom Server
 			public void onSuccess(ArrayList<Note> result) {
 
-
 				for (int i=0; i<result.size();i++) {
 					Note note=new Note();
 					note=result.get(i);
@@ -52,13 +53,14 @@ public class AllNotesView {
 					noteTitle.setText(note.getTitle());
 					noteTitle.getElement().setClassName("noteTitle");
 					deleteButton.getElement().setClassName("deleteButton");
-					deleteButton.getElement().setId(String.valueOf(note.getNoteID()));
+					deleteButton.getElement().setId(String.valueOf(note.getNoteID())); //deleteButton bekommt ID
 					editButton.getElement().setClassName("editButton");
+					editButton.getElement().setId(String.valueOf(note.getId()));
 					deleteButton.addClickHandler(
 							new ClickHandler() {
 								public void onClick(ClickEvent event) {
-									//Delete user data in currentNote object
-									Button currentButton= (Button) event.getSource();
+ 									//Delete user data in currentNote object - Methodenaufruf deleteNoteOfId
+									Button currentButton= (Button) event.getSource(); //event source is type casted to a button
 									NoteService.deleteNoteOfId(Integer.parseInt(currentButton.getElement().getId()), 
 
 											new AsyncCallback<String>() {
@@ -72,12 +74,12 @@ public class AllNotesView {
 											allNotesView.loadView(user);	
 										}
 									}			
-											);
+											); //end of deleteNoteofId
 
 								}
 							}		
 
-							);
+							);// end of addClickHandler
 //clickhandler of edit button comes here
 
 
@@ -85,7 +87,7 @@ public class AllNotesView {
 					userNotesTable.setWidget(i, 1, editButton);
 					userNotesTable.setWidget(i, 2, deleteButton);
 
-				}
+				} //end of for loop
 				loadGui(user);
 			}
 		}
@@ -118,6 +120,7 @@ public class AllNotesView {
 
 
 		// Add a handler to logout button
+		//LoginService.logout - Methodenaufruf
 		logoutButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				LoginService.logout(user,  //Proxy Object

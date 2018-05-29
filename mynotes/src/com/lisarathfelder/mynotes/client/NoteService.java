@@ -12,6 +12,5 @@ public interface NoteService extends RemoteService {
 	String createNote(Note note) throws IllegalArgumentException;
 	ArrayList<Note> getAllNotesUser(User user) throws IllegalArgumentException;
 	String deleteNoteOfId(int id) throws IllegalArgumentException;
-
 	Note getNoteOfID(int id) throws IllegalArgumentException;
 }

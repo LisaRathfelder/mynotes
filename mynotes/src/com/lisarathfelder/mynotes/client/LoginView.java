@@ -37,7 +37,7 @@ public class LoginView {
 	/**
 	 * Create a remote service proxy to talk to the server-side NoteMapper service.
 	 */
-	private final LoginServiceAsync LoginService = GWT.create(LoginService.class); //LoginMapper Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von LoginMapper Implementation im Server zugreifen/Benutzen
+	private final LoginServiceAsync LoginService = GWT.create(LoginService.class); //LoginService Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von LoginService Implementation im Server zugreifen/Benutzen
 
 
 
@@ -88,6 +88,7 @@ public class LoginView {
 
 				errorLabel.setText("Log: Saved Note1 of " + username);
 
+				//Methodenauf LoginService.login
 				LoginService.login(currentUser, //RPC-Kommunikation
 						new AsyncCallback<String>() {
 					public void onFailure(Throwable errorMessage) {
