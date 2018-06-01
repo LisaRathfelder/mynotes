@@ -20,13 +20,14 @@ import com.lisarathfelder.mynotes.shared.Note;
 import com.lisarathfelder.mynotes.shared.User;
 
 public class EditNoteView {
+
 	final VerticalPanel editNotePanel=new VerticalPanel();
 
 	//Elemente von Edit View
 	final TextBox noteTitle = new TextBox();
 	final TextArea editText = new TextArea();
 	final Button saveButton = new Button("Save");
-	
+
 
 
 	// Create the popup dialog box
@@ -42,21 +43,27 @@ public class EditNoteView {
 	 */
 	private final NoteServiceAsync NoteService = GWT.create(NoteService.class); //NoteMapper Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von NoteMapper Implementation im Server zugreifen/Benutzen
 
-	private Note currentNote = new Note();
-	public void loadView(User user) {
 
-
+	private void loadGui(User user, Note note) {
 		editNotePanel.setWidth("100%");
 		editNotePanel.setHeight("100%");
 		editNotePanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		editNotePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
-		editText.setText("Type your Note / Existing Note comes here");
 		editText.getElement().setClassName("textArea");
 		editText.setVisibleLines(10);
 		noteTitle.getElement().setClassName("textFieldNote");
-		noteTitle.setText("Type your note title");
-		
+
+		if(note.getNoteID()==0) {
+			//create Note
+			editText.setText("Type your note");
+			noteTitle.setText("Type your note title");
+		}else {
+			//edit Note
+			editText.setText(note.getContent());
+			noteTitle.setText(note.getTitle());
+		}
+
 		saveButton.getElement().setClassName("button");
 
 		editNotePanel.add(noteTitle);
@@ -65,13 +72,13 @@ public class EditNoteView {
 
 		RootPanel.get("mainContainer").clear();
 		RootPanel.get("mainContainer").add(editNotePanel);
-		
+
 		errorLabel.setText("Error Logs");
 		errorLabel.addStyleName("errorLog"); //Style für CSS definieren
 		RootPanel.get("errorContainer").clear();
 		RootPanel.get("errorContainer").add(errorLabel); //Error label in die Hauptseite (Rootpanel) hinzugefügt
 
-		
+
 		dialogBox.setText("");
 		dialogBox.setAnimationEnabled(true);
 		// We can set the id of a widget by accessing its Element
@@ -82,45 +89,64 @@ public class EditNoteView {
 		dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
 		dialogVPanel.add(closeButton);
 		dialogBox.setWidget(dialogVPanel);
-		
+
 		// Add a handler to save button
 		saveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				//Save user data in currentNote object
+				Note currentNote = new Note(); //empty note
 				currentNote.setTitle(noteTitle.getText());
 				currentNote.setContent(editText.getText());
-			    Date currentDate = new Date();
-				currentNote.setCreatDate(currentDate);
+				Date currentDate = new Date();
 				currentNote.setModDate(currentDate);
 				currentNote.setUserName(user.getUserName());
 
-				
-				//Sending the note object in server via RPC
-				NoteService.createNote(currentNote, //RPC-Kommunikation
-						new AsyncCallback<String>() {
-					public void onFailure(Throwable errorMessage) {
-						// Show the RPC error message to the user
-						errorLabel.setText("Error " + errorMessage);
-
+				if(note.getNoteID()==0) {
+					//create note
+					currentNote.setCreatDate(currentDate);
+					//Sending the note object in the server via RPC
+					NoteService.createNote(currentNote, //RPC-Kommunikation
+							new AsyncCallback<String>() {
+						public void onFailure(Throwable errorMessage) {
+							// Show the RPC error message to the user
+							errorLabel.setText("Error " + errorMessage);
+						}
+						public void onSuccess(String result) {
+							AllNotesView allNotesView = new AllNotesView();
+							allNotesView.loadView(user);	
+						}
 					}
-
-					public void onSuccess(String result) {
-						dialogBox.setText("Successfull");
-						serverResponseLabel.setHTML(result);
-						//dialogBox.center();
-						closeButton.setFocus(true);
-					}
+					); //end if createNote
+					
+				}else {
+					//edit note
+					NoteService.editNoteOfId(currentNote, 
+							new AsyncCallback<String>() {
+						public void onFailure(Throwable errorMessage) {
+							// Show the RPC error message to the user
+							errorLabel.setText("Error " + errorMessage);
+						}
+						public void onSuccess(String result) {
+							AllNotesView allNotesView = new AllNotesView();
+							allNotesView.loadView(user);	
+						}
+					}		
+							
+							
+							
+							
+							);//end of editnote
+					
+					
+					
 				}
-						);	
+					
+
+
 				
 				
-				// Loading Allnotesview
-				AllNotesView allNotesView = new AllNotesView();
-				allNotesView.loadView(user);	
-
-
-
-			}
+				
+			}// end if onClick
 		});	
 
 
@@ -130,7 +156,7 @@ public class EditNoteView {
 				dialogBox.hide();
 			}
 		});
-		
+
 		noteTitle.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event) {
 				noteTitle.setText("");
@@ -142,6 +168,39 @@ public class EditNoteView {
 				editText.setText("");
 			}
 		});
+
+	}// end of loadgui
+
+	public void loadView(User user, int nId) {
+
+		if (nId==0) {
+			//create note
+			Note emptyNote = new Note();
+			emptyNote.setNoteID(0);
+			loadGui(user,emptyNote);
+		}else {
+			//edit note
+			// first get the note title and content from the database
+			NoteService.getNoteOfID(nId, 
+					//RPC-Kommunikation
+					new AsyncCallback<Note>() {
+				public void onFailure(Throwable errorMessage) {
+					// Show the RPC error message to the user
+					errorLabel.setText("Error " + errorMessage);
+				}
+
+				public void onSuccess(Note note) {
+						loadGui(user,note);
+				}
+			}
+					);	
+		}
+			
+		
+
+
+
+
 
 	}
 }

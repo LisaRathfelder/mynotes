@@ -112,9 +112,8 @@ public class NoteServiceImpl  extends RemoteServiceServlet implements NoteServic
 		Connection con = DBConnection.connection(); // 1. DB connection wird hergestellt
 		try {
 		Statement stmt=con.createStatement(); // 2. stmt Objekt wird generiert
-		ResultSet rs=stmt.executeQuery("SELECT title, content from notes where nId=\""
-				+ id
-				+ "\""); //3. Über stmt Objekt wird SQL-Befehl durchgeführt - auslesen
+		ResultSet rs=stmt.executeQuery("SELECT title, content from notes where nId="
+				+ id); //3. Über stmt Objekt wird SQL-Befehl durchgeführt - auslesen
 	    if(rs.next()) {
 	    	currentNote.setTitle(rs.getString("title")); 
 	    	currentNote.setContent(rs.getString("content"));
@@ -129,6 +128,14 @@ public class NoteServiceImpl  extends RemoteServiceServlet implements NoteServic
 	
 	return currentNote;
 }
+
+
+
+	@Override
+	public String editNoteOfId(Note note) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	}
 

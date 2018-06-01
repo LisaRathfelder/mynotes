@@ -26,8 +26,8 @@ public class AllNotesView {
 	final Button logoutButton = new Button("Logout");
 	final Label errorLabel = new Label();
 
-	private final LoginServiceAsync LoginService = GWT.create(LoginService.class); //LoginService (Proxy) Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von LoginService Implementation im Server zugreifen/Benutzen
-	private final NoteServiceAsync NoteService = GWT.create(NoteService.class); //NoteService (Proxy) Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von NoteService Implementation im Server zugreifen/Benutzen
+	private final LoginServiceAsync LoginService = GWT.create(LoginService.class); //LoginService (Proxy) Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von LoginService Implementation im Server zugreifen
+	private final NoteServiceAsync NoteService = GWT.create(NoteService.class); //NoteService (Proxy) Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von NoteService Implementation im Server zugreifen
 
 	public void loadView(User user) {
 
@@ -54,8 +54,8 @@ public class AllNotesView {
 					noteTitle.getElement().setClassName("noteTitle");
 					deleteButton.getElement().setClassName("deleteButton");
 					deleteButton.getElement().setId(String.valueOf(note.getNoteID())); //deleteButton bekommt ID
+					editButton.getElement().setId(String.valueOf(note.getNoteID()));//editButton bekommt ID
 					editButton.getElement().setClassName("editButton");
-					editButton.getElement().setId(String.valueOf(note.getId()));
 					deleteButton.addClickHandler(
 							new ClickHandler() {
 								public void onClick(ClickEvent event) {
@@ -80,8 +80,23 @@ public class AllNotesView {
 							}		
 
 							);// end of addClickHandler
-//clickhandler of edit button comes here
-
+                     editButton.addClickHandler(
+                    		 
+                 			new ClickHandler() {
+    							public void onClick(ClickEvent event) {
+    								//Edit user data in currentNote object
+    								Button currentButton= (Button) event.getSource();
+    								EditNoteView editNoteView = new EditNoteView();
+    								editNoteView.loadView(user,Integer.parseInt(currentButton.getElement().getId()));	
+    								
+    				
+    							}	} 
+                    	 
+                    		 
+                    		 
+                    		 );					//addclickhandler of edit button 
+			
+							
 
 					userNotesTable.setWidget(i, 0, noteTitle);
 					userNotesTable.setWidget(i, 1, editButton);
@@ -144,7 +159,7 @@ public class AllNotesView {
 		createButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				EditNoteView editNoteView = new EditNoteView();
-				editNoteView.loadView(user);					
+				editNoteView.loadView(user,0); //id 0 = create note					
 			}
 		});	
 
