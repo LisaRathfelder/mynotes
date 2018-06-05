@@ -30,7 +30,7 @@ public class DBConnection {
 					Class.forName("com.mysql.jdbc.Driver");
 					url = localUrl;
 
-					con = DriverManager.getConnection(url, user, password);
+					con = DriverManager.getConnection(url, user, password); 
 
 			}
 
@@ -41,7 +41,7 @@ public class DBConnection {
 
 			catch (Exception e) {
 				con = null;
-				e.printStackTrace();
+				e.printStackTrace(); 
 			}
 		}
 

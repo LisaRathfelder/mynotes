@@ -12,6 +12,6 @@ public interface NoteServiceAsync {
 	void getAllNotesUser(User user, AsyncCallback<ArrayList<Note>> callback);
 	void deleteNoteOfId(int id, AsyncCallback<String> callback);
 	void getNoteOfID(int id, AsyncCallback<Note> callback);
-	void editNoteOfId(Note note, AsyncCallback<String> callback);
+	void editNote(Note note, AsyncCallback<String> callback);
 
 }

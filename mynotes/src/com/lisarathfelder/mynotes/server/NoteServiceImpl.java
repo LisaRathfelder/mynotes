@@ -132,10 +132,27 @@ public class NoteServiceImpl  extends RemoteServiceServlet implements NoteServic
 
 
 	@Override
-	public String editNoteOfId(Note note) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
+	public String editNote(Note note) throws IllegalArgumentException {
+		SimpleDateFormat mySQLformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Connection con = DBConnection.connection(); // 1. DB connection wird hergestellt
+		
+		try {
+			Statement stmt=con.createStatement();
+			stmt.executeUpdate("UPDATE notes SET "
+					+ "content=\"" +note.getContent()+ "\","
+					+ "title=\"" +note.getTitle()+ "\","
+					+ "modDate=\"" +mySQLformat.format(note.getModDate())+ "\""
+					+ "where nId=" + note.getNoteID()					
+					);
+			
+		} catch (SQLException e) {  //Fehlerbehandlung
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return null;
 	}
 
 	}
+
 

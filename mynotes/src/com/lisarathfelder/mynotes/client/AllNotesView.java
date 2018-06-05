@@ -101,6 +101,11 @@ public class AllNotesView {
 					userNotesTable.setWidget(i, 0, noteTitle);
 					userNotesTable.setWidget(i, 1, editButton);
 					userNotesTable.setWidget(i, 2, deleteButton);
+					
+					userNotesTable.setStyleName("userTable");
+					userNotesTable.getFlexCellFormatter().setStyleName(0, 0, "tableCell-title");  
+					userNotesTable.getFlexCellFormatter().setStyleName(0, 1, "tableCell-button");  
+					userNotesTable.getFlexCellFormatter().setStyleName(0, 2, "tableCell-button");  
 
 				} //end of for loop
 				loadGui(user);

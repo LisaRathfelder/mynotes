@@ -39,9 +39,9 @@ public class EditNoteView {
 
 
 	/**
-	 * Create a remote service proxy to talk to the server-side NoteMapper service.
+	 * Create a remote service proxy to talk to the server-side NoteService.
 	 */
-	private final NoteServiceAsync NoteService = GWT.create(NoteService.class); //NoteMapper Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von NoteMapper Implementation im Server zugreifen/Benutzen
+	private final NoteServiceAsync NoteService = GWT.create(NoteService.class); //NoteService Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von NoteService Implementation im Server zugreifen
 
 
 	private void loadGui(User user, Note note) {
@@ -50,28 +50,28 @@ public class EditNoteView {
 		editNotePanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		editNotePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
-		editText.getElement().setClassName("textArea");
+		editText.getElement().setClassName("textArea"); //Styles den Elementen hinzugefügt
 		editText.setVisibleLines(10);
 		noteTitle.getElement().setClassName("textFieldNote");
 
-		if(note.getNoteID()==0) {
+		if(note.getNoteID()==0) {  //Wenn User den create-Button klickt wird editNotView mit id=0 geladen
 			//create Note
 			editText.setText("Type your note");
 			noteTitle.setText("Type your note title");
 		}else {
 			//edit Note
-			editText.setText(note.getContent());
+			editText.setText(note.getContent()); //Wenn User den editButton klickt wird die editNoteView mit der NoteId aufgerufen
 			noteTitle.setText(note.getTitle());
 		}
 
 		saveButton.getElement().setClassName("button");
 
-		editNotePanel.add(noteTitle);
+		editNotePanel.add(noteTitle); //GUI-Elemente zum Panel hinzugefügt
 		editNotePanel.add(editText);
 		editNotePanel.add(saveButton);
 
 		RootPanel.get("mainContainer").clear();
-		RootPanel.get("mainContainer").add(editNotePanel);
+		RootPanel.get("mainContainer").add(editNotePanel); //editNotePanel dem mainContainer hinzugefügt 
 
 		errorLabel.setText("Error Logs");
 		errorLabel.addStyleName("errorLog"); //Style für CSS definieren
@@ -82,7 +82,7 @@ public class EditNoteView {
 		dialogBox.setText("");
 		dialogBox.setAnimationEnabled(true);
 		// We can set the id of a widget by accessing its Element
-		closeButton.getElement().setId("closeButton");
+		closeButton.getElement().setId("closeButton"); //warum haben wir hier nochmal ID genommen?
 		VerticalPanel dialogVPanel = new VerticalPanel();
 		dialogVPanel.addStyleName("dialogVPanel");
 		dialogVPanel.add(serverResponseLabel);
@@ -90,20 +90,21 @@ public class EditNoteView {
 		dialogVPanel.add(closeButton);
 		dialogBox.setWidget(dialogVPanel);
 
-		// Add a handler to save button
+		// Add a handler to save button - Hier wird dem Save Button ein ClickHandler hinzugefügt und ein Note Objekt erstellt 
 		saveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				//Save user data in currentNote object
-				Note currentNote = new Note(); //empty note
-				currentNote.setTitle(noteTitle.getText());
-				currentNote.setContent(editText.getText());
-				Date currentDate = new Date();
-				currentNote.setModDate(currentDate);
-				currentNote.setUserName(user.getUserName());
 
-				if(note.getNoteID()==0) {
-					//create note
-					currentNote.setCreatDate(currentDate);
+				Note currentNote = new Note(); //leeres Notiz-Objekt wird erstellt
+				currentNote.setTitle(noteTitle.getText()); //Inhalt von noteTitle und editText wird übergeben
+				currentNote.setContent(editText.getText());
+				Date currentDate = new Date(); //neues Date Objekt wird erstellt
+				currentNote.setModDate(currentDate); 
+				currentNote.setUserName(user.getUserName()); //UserName wird in currentNote gespeichert
+				currentNote.setNoteID(note.getNoteID());
+
+				if(note.getNoteID()==0) { 
+					//create note - Die Notiz wird erstellt
+					currentNote.setCreatDate(currentDate); //creatDate wird in currentNote gespeichert
 					//Sending the note object in the server via RPC
 					NoteService.createNote(currentNote, //RPC-Kommunikation
 							new AsyncCallback<String>() {
@@ -111,41 +112,28 @@ public class EditNoteView {
 							// Show the RPC error message to the user
 							errorLabel.setText("Error " + errorMessage);
 						}
-						public void onSuccess(String result) {
+						public void onSuccess(String result) { //Wenn DB connection hergestellt wurde und Notiz gespeichert wurde wird die AllNotesView geladen
 							AllNotesView allNotesView = new AllNotesView();
 							allNotesView.loadView(user);	
 						}
 					}
-					); //end if createNote
-					
-				}else {
-					//edit note
-					NoteService.editNoteOfId(currentNote, 
+							); //end if createNote
+
+				}else { 
+					//edit note - Eine bestehende Notiz wird anhand der ID des currentNote Objekts editiert
+					NoteService.editNote(currentNote, //ID des curretNote Objekts wird aufgerufen
 							new AsyncCallback<String>() {
 						public void onFailure(Throwable errorMessage) {
 							// Show the RPC error message to the user
 							errorLabel.setText("Error " + errorMessage);
 						}
-						public void onSuccess(String result) {
+						public void onSuccess(String result) { //Wenn DB connection besteht und Notiz editiert wurde wird AllNotesView geladen
 							AllNotesView allNotesView = new AllNotesView();
 							allNotesView.loadView(user);	
 						}
 					}		
-							
-							
-							
-							
 							);//end of editnote
-					
-					
-					
 				}
-					
-
-
-				
-				
-				
 			}// end if onClick
 		});	
 
@@ -157,13 +145,13 @@ public class EditNoteView {
 			}
 		});
 
-		noteTitle.addClickHandler(new ClickHandler(){
+		noteTitle.addClickHandler(new ClickHandler(){ //ClickHandler der ermöglicht einen Text in den Titel zu tippen
 			public void onClick(ClickEvent event) {
 				noteTitle.setText("");
 			}
 		});
 
-		editText.addClickHandler(new ClickHandler(){
+		editText.addClickHandler(new ClickHandler(){ //ClickHandler der ermöglicht einen Text in das Textfeld zu tippen
 			public void onClick(ClickEvent event) {
 				editText.setText("");
 			}
@@ -175,7 +163,7 @@ public class EditNoteView {
 
 		if (nId==0) {
 			//create note
-			Note emptyNote = new Note();
+			Note emptyNote = new Note(); //Warum hier nochmal emptyNote wenn wir oben schon currentNote haben?
 			emptyNote.setNoteID(0);
 			loadGui(user,emptyNote);
 		}else {
@@ -190,13 +178,13 @@ public class EditNoteView {
 				}
 
 				public void onSuccess(Note note) {
-						loadGui(user,note);
+					loadGui(user,note);
 				}
 			}
 					);	
 		}
-			
-		
+
+
 
 
 
