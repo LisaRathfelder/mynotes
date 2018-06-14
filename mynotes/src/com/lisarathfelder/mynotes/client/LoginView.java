@@ -3,6 +3,9 @@ package com.lisarathfelder.mynotes.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -25,7 +28,7 @@ public class LoginView {
 	final PasswordTextBox passwordField = new PasswordTextBox(); 
 	final Button loginButton = new Button("Login");
 	final Label errorLabel = new Label();
-	
+
 
 	// Create the popup dialog box
 	final DialogBox dialogBox = new DialogBox();
@@ -33,14 +36,42 @@ public class LoginView {
 	final HTML serverResponseLabel = new HTML();
 	private  String username;
 
-	private User currentUser = new User();
 
 	/**
 	 * Create a remote service proxy to talk to the server-side NoteMapper service.
 	 */
 	private final LoginServiceAsync LoginService = GWT.create(LoginService.class); //LoginService Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von LoginService Implementation im Server zugreifen/Benutzen
 
+	private void doLogin() {
+		
+		User currentUser = new User();
 
+
+		currentUser.setUserName(usernameField.getText());
+		currentUser.setUserPassword(passwordField.getText());
+
+
+		//Methodenauf LoginService.createUser
+		LoginService.createUser(currentUser, //RPC-Kommunikation
+				new AsyncCallback<User>() {
+			public void onFailure(Throwable errorMessage) {
+				// Show the RPC error message to the user
+				errorLabel.setText("Error " + errorMessage);
+
+			}
+
+			public void onSuccess(User user) {
+				//dialogBox.setText("Successfull");
+				//dialogBox.center();
+				//closeButton.setFocus(true);
+			}
+		}
+				);	
+
+		AllNotesView allNotesView = new AllNotesView();
+		allNotesView.loadView(currentUser);	
+
+	}
 
 	public void loadView() {
 		loginPanel.setWidth("100%");
@@ -81,39 +112,32 @@ public class LoginView {
 		// Add a handler to login button
 		loginButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-
-
-				username=usernameField.getText();
-
-				currentUser.setUserName(usernameField.getText());
-
-				errorLabel.setText("Log: Saved Note1 of " + username);
-
-				//Methodenauf LoginService.login
-				LoginService.login(currentUser, //RPC-Kommunikation
-						new AsyncCallback<String>() {
-					public void onFailure(Throwable errorMessage) {
-						// Show the RPC error message to the user
-						errorLabel.setText("Error " + errorMessage);
-
-					}
-
-					public void onSuccess(String result) {
-						dialogBox.setText("Successfull");
-						serverResponseLabel.setHTML(result);
-						//dialogBox.center();
-						closeButton.setFocus(true);
-					}
-				}
-						);	
-				
-				AllNotesView allNotesView = new AllNotesView();
-				allNotesView.loadView(currentUser);	
-
-
-
+				doLogin();
 			}
 		});
+		
+		
+		  class keyEnterHandler implements KeyDownHandler { //Definition
+				public void onKeyDown(KeyDownEvent event) {
+					if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) { 
+						doLogin();
+					}
+				}
+		    }	
+		  
+		  keyEnterHandler enterHandler = new keyEnterHandler();  //Instanzierung
+		  
+		  
+		  usernameField.addKeyDownHandler(enterHandler);
+		  passwordField.addKeyDownHandler(enterHandler);
+		  loginButton.addKeyDownHandler(enterHandler);
+		  loginButton.setFocus(true);
+		  
+		
+		
+		
+		
+		
 
 		// Add a handler to close the DialogBox
 		closeButton.addClickHandler(new ClickHandler() {
@@ -121,22 +145,22 @@ public class LoginView {
 				dialogBox.hide();
 			}
 		});
-		
+
 		passwordField.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				passwordField.setText("");	
 			}
 		});
-	
+
 		usernameField.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event) {
 				usernameField.setText("");	
 			}
 		});
-		
-	
-		
-	
-	
+
+
+
+
+
 	}
 }

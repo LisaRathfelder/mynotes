@@ -9,4 +9,8 @@ public interface LoginServiceAsync {
 
 	void logout(User user, AsyncCallback<String> callback);
 
+	void createUser(User user, AsyncCallback<User> callback);
+
+	void getUserByUserName(String userName, AsyncCallback<User> callback);
+
 }

@@ -147,13 +147,19 @@ public class EditNoteView {
 
 		noteTitle.addClickHandler(new ClickHandler(){ //ClickHandler der ermöglicht einen Text in den Titel zu tippen
 			public void onClick(ClickEvent event) {
-				noteTitle.setText("");
+				if(note.getNoteID()==0) { //create note
+					noteTitle.setText("");	
+				}
+				
 			}
 		});
 
 		editText.addClickHandler(new ClickHandler(){ //ClickHandler der ermöglicht einen Text in das Textfeld zu tippen
 			public void onClick(ClickEvent event) {
-				editText.setText("");
+				if(note.getNoteID()==0) { //create note
+					editText.setText("");
+				}
+				
 			}
 		});
 
