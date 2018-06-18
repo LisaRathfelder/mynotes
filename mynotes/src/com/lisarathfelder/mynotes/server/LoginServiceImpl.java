@@ -1,6 +1,7 @@
 package com.lisarathfelder.mynotes.server;
 
 import com.lisarathfelder.mynotes.client.LoginService;
+import com.lisarathfelder.mynotes.shared.Note;
 import com.lisarathfelder.mynotes.shared.User;
 
 import java.sql.Connection;
@@ -60,13 +61,37 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return user;
 	}
 
 	@Override
 	public User getUserByUserName(String userName) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return null;
+
+		User currentUser = new User();
+		currentUser.setUserName(userName);
+		Connection con = DBConnection.connection(); // 1. DB connection wird hergestellt
+		try {
+		Statement stmt=con.createStatement(); // 2. stmt Objekt wird generiert
+		ResultSet rs=stmt.executeQuery("SELECT userId,userPassword from users where userName=\""
+				+ userName
+				+"\""); //3. Über stmt Objekt wird SQL-Befehl durchgeführt - auslesen
+	    if(rs.next()) {
+	    	currentUser.setUserID(Integer.parseInt(rs.getString("userId"))); 
+	    	currentUser.setUserPassword(rs.getString("userPassword"));
+	   	 }else {
+	   		currentUser.setUserID(0); //user not existing 
+	   	 }
+		
+		
+	} catch (SQLException e) {  //Fehlerbehandlung
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+	return currentUser;		
+		
+		
+		
 	}
 
 

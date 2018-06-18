@@ -42,17 +42,11 @@ public class LoginView {
 	 */
 	private final LoginServiceAsync LoginService = GWT.create(LoginService.class); //LoginService Objekt wird generiert. Über dieses Objekt können wir auf die Methoden von LoginService Implementation im Server zugreifen/Benutzen
 
-	private void doLogin() {
-		
-		User currentUser = new User();
 
 
-		currentUser.setUserName(usernameField.getText());
-		currentUser.setUserPassword(passwordField.getText());
-
-
-		//Methodenauf LoginService.createUser
-		LoginService.createUser(currentUser, //RPC-Kommunikation
+	private void createUser(User user) {
+		//Methodenaufruf LoginService.createUser
+		LoginService.createUser(user, //RPC-Kommunikation //Wenn User auf Login klickt,
 				new AsyncCallback<User>() {
 			public void onFailure(Throwable errorMessage) {
 				// Show the RPC error message to the user
@@ -60,17 +54,55 @@ public class LoginView {
 
 			}
 
-			public void onSuccess(User user) {
-				//dialogBox.setText("Successfull");
-				//dialogBox.center();
-				//closeButton.setFocus(true);
+			public void onSuccess(User user) { 
+				AllNotesView allNotesView = new AllNotesView(); //Wenn Login erfolgreich, wird die loadView geladen
+				allNotesView.loadView(user);	
 			}
 		}
 				);	
+	}
 
-		AllNotesView allNotesView = new AllNotesView();
-		allNotesView.loadView(currentUser);	
+	private void checkUser(User user) {
+		//Methodenaufruf LoginService.getUserByUserName
+		LoginService.getUserByUserName(user.getUserName(), //RPC-Kommunikation //Wenn User auf Login klickt,
+				new AsyncCallback<User>() {
+			public void onFailure(Throwable errorMessage) {
+				// Show the RPC error message to the user
+				errorLabel.setText("Error " + errorMessage);
 
+			}
+
+			public void onSuccess(User userfromDB) { 
+				if (userfromDB.getUserID() == 0) {
+					//user does not exist, create user in db
+					createUser(user);
+
+				}else {
+					//user exists check password
+					if(user.getuserPassword() == userfromDB.getuserPassword()) {
+						//user has typed correct password 
+						AllNotesView allNotesView = new AllNotesView(); //Wenn Login erfolgreich, wird die loadView geladen
+						allNotesView.loadView(userfromDB);	
+					}else {
+						//wrong password
+						errorLabel.setText("Error: Wrong Password ");
+					}
+
+				}
+
+
+			}
+		}
+				);	
+	}
+
+
+
+	private void doLogin() {
+		User currentUser = new User(); //neues User-Objekt wird erstellt
+		currentUser.setUserName(usernameField.getText()); //Text von usernameField wird in currenUser gespeichert
+		currentUser.setUserPassword(passwordField.getText()); //Text von passwordField wird in currentUser gespeichert
+		checkUser(currentUser);
 	}
 
 	public void loadView() {
@@ -115,29 +147,29 @@ public class LoginView {
 				doLogin();
 			}
 		});
-		
-		
-		  class keyEnterHandler implements KeyDownHandler { //Definition
-				public void onKeyDown(KeyDownEvent event) {
-					if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) { 
-						doLogin();
-					}
+
+
+		class keyEnterHandler implements KeyDownHandler { //Definition //User drückt auf die Enter-Taste und Login erfolgt
+			public void onKeyDown(KeyDownEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) { 
+					doLogin();
 				}
-		    }	
-		  
-		  keyEnterHandler enterHandler = new keyEnterHandler();  //Instanzierung
-		  
-		  
-		  usernameField.addKeyDownHandler(enterHandler);
-		  passwordField.addKeyDownHandler(enterHandler);
-		  loginButton.addKeyDownHandler(enterHandler);
-		  loginButton.setFocus(true);
-		  
-		
-		
-		
-		
-		
+			}
+		}	
+
+		keyEnterHandler enterHandler = new keyEnterHandler();  //Instanzierung
+
+
+		usernameField.addKeyDownHandler(enterHandler);
+		passwordField.addKeyDownHandler(enterHandler);
+		loginButton.addKeyDownHandler(enterHandler);
+		loginButton.setFocus(true);
+
+
+
+
+
+
 
 		// Add a handler to close the DialogBox
 		closeButton.addClickHandler(new ClickHandler() {
