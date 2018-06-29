@@ -7,8 +7,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -28,12 +26,6 @@ public class EditNoteView {
 	final TextArea editText = new TextArea();
 	final Button saveButton = new Button("Save");
 
-
-
-	// Create the popup dialog box
-	final DialogBox dialogBox = new DialogBox();
-	final Button closeButton = new Button("Close");
-	final HTML serverResponseLabel = new HTML();
 
 	final Label errorLabel = new Label();
 
@@ -73,22 +65,11 @@ public class EditNoteView {
 		RootPanel.get("mainContainer").clear();
 		RootPanel.get("mainContainer").add(editNotePanel); //editNotePanel dem mainContainer hinzugefügt 
 
-		errorLabel.setText("Error Logs");
+		errorLabel.setText("");
 		errorLabel.addStyleName("errorLog"); //Style für CSS definieren
 		RootPanel.get("errorContainer").clear();
 		RootPanel.get("errorContainer").add(errorLabel); //Error label in die Hauptseite (Rootpanel) hinzugefügt
 
-
-		dialogBox.setText("");
-		dialogBox.setAnimationEnabled(true);
-		// We can set the id of a widget by accessing its Element
-		closeButton.getElement().setId("closeButton"); //warum haben wir hier nochmal ID genommen?
-		VerticalPanel dialogVPanel = new VerticalPanel();
-		dialogVPanel.addStyleName("dialogVPanel");
-		dialogVPanel.add(serverResponseLabel);
-		dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-		dialogVPanel.add(closeButton);
-		dialogBox.setWidget(dialogVPanel);
 
 		// Add a handler to save button - Hier wird dem Save Button ein ClickHandler hinzugefügt und ein Note Objekt erstellt 
 		saveButton.addClickHandler(new ClickHandler() {
@@ -138,19 +119,12 @@ public class EditNoteView {
 		});	
 
 
-		// Add a handler to close the DialogBox
-		closeButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				dialogBox.hide();
-			}
-		});
-
 		noteTitle.addClickHandler(new ClickHandler(){ //ClickHandler der ermöglicht einen Text in den Titel zu tippen
 			public void onClick(ClickEvent event) {
 				if(note.getNoteID()==0) { //create note
 					noteTitle.setText("");	
 				}
-				
+
 			}
 		});
 
@@ -159,7 +133,7 @@ public class EditNoteView {
 				if(note.getNoteID()==0) { //create note
 					editText.setText("");
 				}
-				
+
 			}
 		});
 

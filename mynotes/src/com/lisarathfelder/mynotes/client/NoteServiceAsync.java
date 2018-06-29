@@ -13,5 +13,6 @@ public interface NoteServiceAsync {
 	void deleteNoteOfId(int id, AsyncCallback<String> callback);
 	void getNoteOfID(int id, AsyncCallback<Note> callback);
 	void editNote(Note note, AsyncCallback<String> callback);
+	void initNoteMapperObject(AsyncCallback<Void> callback);
 
 }

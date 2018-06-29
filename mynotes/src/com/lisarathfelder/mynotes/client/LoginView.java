@@ -6,11 +6,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -28,13 +25,6 @@ public class LoginView {
 	final PasswordTextBox passwordField = new PasswordTextBox(); 
 	final Button loginButton = new Button("Login");
 	final Label errorLabel = new Label();
-
-
-	// Create the popup dialog box
-	final DialogBox dialogBox = new DialogBox();
-	final Button closeButton = new Button("Close");
-	final HTML serverResponseLabel = new HTML();
-	private  String username;
 
 
 	/**
@@ -63,37 +53,51 @@ public class LoginView {
 	}
 
 	private void checkUser(User user) {
-		//Methodenaufruf LoginService.getUserByUserName
-		LoginService.getUserByUserName(user.getUserName(), //RPC-Kommunikation //Wenn User auf Login klickt,
-				new AsyncCallback<User>() {
+		//Methodenaufruf LoginService.initLoginMapperObject
+		LoginService.initLoginMapperObject(new AsyncCallback<Void>() {
 			public void onFailure(Throwable errorMessage) {
 				// Show the RPC error message to the user
 				errorLabel.setText("Error " + errorMessage);
 
 			}
 
-			public void onSuccess(User userfromDB) { 
-				if (userfromDB.getUserID() == 0) {
-					//user does not exist, create user in db
-					createUser(user);
+			@Override
+			public void onSuccess(Void result) {
+				// TODO Auto-generated method stub
+				LoginService.getUserByUserName(user.getUserName(), //RPC-Kommunikation //Wenn User auf Login klickt,
+						new AsyncCallback<User>() {
+					public void onFailure(Throwable errorMessage) {
+						// Show the RPC error message to the user
+						errorLabel.setText("Error " + errorMessage);
 
-				}else {
-					//user exists check password
-					if(user.getuserPassword() == userfromDB.getuserPassword()) {
-						//user has typed correct password 
-						AllNotesView allNotesView = new AllNotesView(); //Wenn Login erfolgreich, wird die loadView geladen
-						allNotesView.loadView(userfromDB);	
-					}else {
-						//wrong password
-						errorLabel.setText("Error: Wrong Password ");
 					}
 
-				}
+					public void onSuccess(User userfromDB) { 
+						if (userfromDB.getUserID() == 0) {
+							//user does not exist, create user in db
+							createUser(user);
 
+						}else {
+							//user exists check password
+							if(user.getuserPassword() == userfromDB.getuserPassword()) {
+								//user has typed correct password 
+								AllNotesView allNotesView = new AllNotesView(); //Wenn Login erfolgreich, wird die loadView geladen
+								allNotesView.loadView(userfromDB);	
+							}else {
+								//wrong password
+								errorLabel.setText("Error: Wrong Password ");
+							}
+
+						}
+
+
+					}
+				}
+						);	
 
 			}
-		}
-				);	
+		});
+
 	}
 
 
@@ -125,21 +129,11 @@ public class LoginView {
 		RootPanel.get("mainContainer").clear();	
 		RootPanel.get("mainContainer").add(loginPanel);
 
-		errorLabel.setText("Error Logs");
+		errorLabel.setText("");
 		errorLabel.addStyleName("errorLog"); //Style für CSS definieren
 		RootPanel.get("errorContainer").clear();
 		RootPanel.get("errorContainer").add(errorLabel); //Error label in die Hauptseite (Rootpanel) hinzugefügt
 
-		dialogBox.setText("");
-		dialogBox.setAnimationEnabled(true);
-		// We can set the id of a widget by accessing its Element
-		closeButton.getElement().setId("closeButton");
-		VerticalPanel dialogVPanel = new VerticalPanel();
-		dialogVPanel.addStyleName("dialogVPanel");
-		dialogVPanel.add(serverResponseLabel);
-		dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-		dialogVPanel.add(closeButton);
-		dialogBox.setWidget(dialogVPanel);
 
 		// Add a handler to login button
 		loginButton.addClickHandler(new ClickHandler() {
@@ -166,17 +160,6 @@ public class LoginView {
 		loginButton.setFocus(true);
 
 
-
-
-
-
-
-		// Add a handler to close the DialogBox
-		closeButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				dialogBox.hide();
-			}
-		});
 
 		passwordField.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
