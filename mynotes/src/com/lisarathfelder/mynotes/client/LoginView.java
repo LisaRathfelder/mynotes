@@ -25,7 +25,8 @@ public class LoginView {
 	final PasswordTextBox passwordField = new PasswordTextBox(); 
 	final Button loginButton = new Button("Login");
 	final Label errorLabel = new Label();
-
+    
+	Crypto crypto= new Crypto();
 
 	/**
 	 * Create a remote service proxy to talk to the server-side NoteMapper service.
@@ -105,7 +106,7 @@ public class LoginView {
 	private void doLogin() {
 		User currentUser = new User(); //neues User-Objekt wird erstellt
 		currentUser.setUserName(usernameField.getText()); //Text von usernameField wird in currenUser gespeichert
-		currentUser.setUserPassword(passwordField.getText()); //Text von passwordField wird in currentUser gespeichert
+		currentUser.setUserPassword(crypto.encryptString(passwordField.getText())); //Text von passwordField wird in currentUser gespeichert
 		checkUser(currentUser);
 	}
 
